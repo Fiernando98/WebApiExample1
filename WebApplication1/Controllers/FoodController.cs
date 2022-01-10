@@ -10,6 +10,8 @@ namespace WebApplication1.Controllers {
         [HttpGet]
         public IActionResult GetAll() {
             try {
+                string? bearerToken = Request.Headers["Authorization"];
+                if(bearerToken == null) return Unauthorized(null);
                 return Ok(FoodsServices.GetAll());
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
