@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using WebApplication1.Models;
 namespace WebApplication1.Settings {
     public class DBContext {
         private const string DBName = "db.sqlite";
@@ -43,9 +44,10 @@ namespace WebApplication1.Settings {
 
         private static List<string> TablesDB() {
             List<string> list = new List<string>();
-            list.Add("CREATE TABLE IF NOT EXISTS Restaurants (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL)");
-            list.Add("CREATE TABLE IF NOT EXISTS Foods (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_restaurant INTEGER, name TEXT NOT NULL, description TEXT NOT NULL, calories NUMERIC NOT NULL, FOREIGN KEY(id_restaurant) REFERENCES Restaurants(id) ON DELETE CASCADE ON UPDATE CASCADE)");
-            list.Add("CREATE TABLE IF NOT EXISTS AuthTokens (id_restaurant INTEGER, token TEXT NOT NULL, FOREIGN KEY(id_restaurant) REFERENCES Restaurants(id) ON DELETE CASCADE ON UPDATE CASCADE)");
+            list.Add(UserSQLTable.toCreateQuery);
+            list.Add(AuthTokenSQLTable.toCreateQuery);
+            list.Add(RestaurantSQLTable.toCreateQuery);
+            list.Add(FoodSQLTable.toCreateQuery);
             return list;
         }
     }

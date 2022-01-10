@@ -1,7 +1,7 @@
 ﻿using WebApplication1.Settings;
 using System.Data.SQLite;
 namespace WebApplication1.Services {
-    public class TokenValidator {
+    public class TokenServices {
         public static bool ValidateToken(string? token) {
             if (token != null) {
                 return _CheckToken(token.Split("bearer ").LastOrDefault());

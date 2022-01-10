@@ -10,9 +10,6 @@ namespace WebApplication1.Controllers {
         [HttpGet]
         public IActionResult GetAll() {
             try {
-                /*string? bearerToken = Request.Headers["Authorization"];
-                return Ok(Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
-                if(bearerToken == null) return Unauthorized(null);*/
                 return Ok(FoodsServices.GetAll());
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
@@ -20,7 +17,7 @@ namespace WebApplication1.Controllers {
         }
 
         //getSingle
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public IActionResult GetSingle(long id) {
             try {
                 Food? item = FoodsServices.GetSingle(id);
@@ -43,7 +40,7 @@ namespace WebApplication1.Controllers {
         }
 
         //edit
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:long}")]
         public IActionResult EditItem(long id,[FromBody] Food item) {
             try {
                 Food? itemEdited = FoodsServices.Edit(id,item);
@@ -55,7 +52,7 @@ namespace WebApplication1.Controllers {
         }
 
         //delete
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:long}")]
         public IActionResult DeleteItem(long id) {
             try {
                 int changes = FoodsServices.Delete(id);
