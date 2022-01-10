@@ -8,7 +8,7 @@ namespace WebApplication1.Services {
             try {
                 List<Food> list = new List<Food>();
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods", dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 list.Add(new Food {
@@ -30,7 +30,7 @@ namespace WebApplication1.Services {
         public static Food? GetSingle(int id) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods Where id = " + id, dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods WHERE id = " + id,dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 return new Food {
@@ -51,14 +51,44 @@ namespace WebApplication1.Services {
         public static Food? Create(Food newItem) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    var query = "INSERT INTO Foods (name, description, calories) VALUES (?, ?, ?)";
-                    using (SQLiteCommand command = new SQLiteCommand(query, dbContext)) {
-                        command.Parameters.Add(new SQLiteParameter("name", newItem.Name));
-                        command.Parameters.Add(new SQLiteParameter("description", newItem.Description));
-                        command.Parameters.Add(new SQLiteParameter("calories", newItem.Calories));
-                        command.ExecuteNonQuery();
+                    using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foods (name, description, calories) VALUES (?, ?, ?)",dbContext)) {
+                        command.Parameters.Add(new SQLiteParameter("name",newItem.Name));
+                        command.Parameters.Add(new SQLiteParameter("description",newItem.Description));
+                        command.Parameters.Add(new SQLiteParameter("calories",newItem.Calories));
+                        int changes = command.ExecuteNonQuery();
+                        if (changes <= 0) return null;
                         newItem.ID = dbContext.LastInsertRowId;
                         return newItem;
+                    }
+                }
+            } catch (Exception) {
+                throw;
+            }
+        }
+
+        public static Food? Edit(int id,Food item) {
+            try {
+                using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                    using (SQLiteCommand command = new SQLiteCommand("UPDATE Foods SET name = ?, description = ?, calories = ? WHERE ID = " + id,dbContext)) {
+                        command.Parameters.Add(new SQLiteParameter("name",item.Name));
+                        command.Parameters.Add(new SQLiteParameter("description",item.Description));
+                        command.Parameters.Add(new SQLiteParameter("calories",item.Calories));
+                        int changes = command.ExecuteNonQuery();
+                        if (changes <= 0) return null;
+                        item.ID = id;
+                        return item;
+                    }
+                }
+            } catch (Exception) {
+                throw;
+            }
+        }
+
+        public static int Delete(int id) {
+            try {
+                using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Foods WHERE id = " + id,dbContext)) {
+                        return command.ExecuteNonQuery();
                     }
                 }
             } catch (Exception) {

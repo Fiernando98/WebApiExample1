@@ -12,7 +12,7 @@ namespace WebApplication1.Controllers {
             try {
                 return Ok(FoodsServices.GetAll());
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
 
@@ -25,7 +25,7 @@ namespace WebApplication1.Controllers {
                 else return NotFound(null);
 
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
 
@@ -33,19 +33,21 @@ namespace WebApplication1.Controllers {
         [HttpPost]
         public IActionResult AddItem(Food newItem) {
             try {
-                return Created(nameof(AddItem), FoodsServices.Create(newItem));
+                return Created(nameof(AddItem),FoodsServices.Create(newItem));
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
 
         //edit
         [HttpPatch("{id}")]
-        public IActionResult EditItem(int id, [FromBody] Food item) {
+        public IActionResult EditItem(int id,[FromBody] Food item) {
             try {
-                return Ok();
+                Food? itemEdited = FoodsServices.Edit(id,item);
+                if (itemEdited == null) return NotFound(null);
+                return Ok(itemEdited);
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
 
@@ -53,11 +55,11 @@ namespace WebApplication1.Controllers {
         [HttpDelete("{id}")]
         public IActionResult DeleteItem(int id) {
             try {
-                Food? item = FoodsServices.GetSingle(id);
-                if (item == null) return NotFound(null);
+                int changes = FoodsServices.Delete(id);
+                if (changes <= 0) return NotFound(null);
                 return NoContent();
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
     }
