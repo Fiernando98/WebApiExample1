@@ -3,20 +3,17 @@ using WebApplication1.Settings;
 using System.Data.SQLite;
 
 namespace WebApplication1.Services {
-    public class FoodsServices {
-        public static List<Food> GetAll() {
+    public class RestaurantsServices {
+        public static List<Restaurant> GetAll() {
             try {
-                List<Food> list = new List<Food>();
+                List<Restaurant> list = new List<Restaurant>();
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Restaurants",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                list.Add(new Food {
+                                list.Add(new Restaurant {
                                     ID = Convert.ToInt64(reader["id"].ToString()),
-                                    Restaurant = (reader["id_restaurant"] != null) ? RestaurantsServices.GetSingle(Convert.ToInt64(reader["id_restaurant"].ToString())) : null,
-                                    Name = reader["name"].ToString(),
-                                    Description = reader["description"].ToString(),
-                                    Calories = Convert.ToDouble(reader["calories"])
+                                    Name = reader["name"].ToString()
                                 });
                             }
                         }
@@ -28,18 +25,15 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static Food? GetSingle(long id) {
+        public static Restaurant? GetSingle(long id) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods WHERE id = " + id,dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Restaurants WHERE id = " + id,dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new Food {
+                                return new Restaurant {
                                     ID = Convert.ToInt64(reader["id"].ToString()),
-                                    Restaurant = RestaurantsServices.GetSingle(Convert.ToInt64(reader["id_restaurant"].ToString())),
-                                    Name = reader["name"].ToString(),
-                                    Description = reader["description"].ToString(),
-                                    Calories = Convert.ToDouble(reader["calories"])
+                                    Name = reader["name"].ToString()
                                 };
                             }
                         }
@@ -50,20 +44,14 @@ namespace WebApplication1.Services {
             }
             return null;
         }
-        public static Food? Create(Food newItem) {
+        public static Restaurant? Create(Restaurant newItem) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foods (id_restaurant, name, description, calories) VALUES (?, ?, ?, ?)",dbContext)) {
-                        command.Parameters.Add(new SQLiteParameter("id_restaurant",newItem.Restaurant?.ID));
+                    using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Restaurants (name) VALUES (?)",dbContext)) {
                         command.Parameters.Add(new SQLiteParameter("name",newItem.Name));
-                        command.Parameters.Add(new SQLiteParameter("description",newItem.Description));
-                        command.Parameters.Add(new SQLiteParameter("calories",newItem.Calories));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) return null;
                         newItem.ID = dbContext.LastInsertRowId;
-                        if(newItem.Restaurant?.ID != null) {
-                            newItem.Restaurant = RestaurantsServices.GetSingle(newItem.Restaurant.ID);
-                        }
                         return newItem;
                     }
                 }
@@ -72,13 +60,11 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static Food? Edit(long id,Food item) {
+        public static Restaurant? Edit(long id,Restaurant item) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("UPDATE Foods SET name = ?, description = ?, calories = ? WHERE ID = " + id,dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("UPDATE Restaurants SET name = ? WHERE ID = " + id,dbContext)) {
                         command.Parameters.Add(new SQLiteParameter("name",item.Name));
-                        command.Parameters.Add(new SQLiteParameter("description",item.Description));
-                        command.Parameters.Add(new SQLiteParameter("calories",item.Calories));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) return null;
                         item.ID = id;
@@ -93,7 +79,7 @@ namespace WebApplication1.Services {
         public static int Delete(long id) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Foods WHERE id = " + id,dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Restaurants WHERE id = " + id,dbContext)) {
                         return command.ExecuteNonQuery();
                     }
                 }

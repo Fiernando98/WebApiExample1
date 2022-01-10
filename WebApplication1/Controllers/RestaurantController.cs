@@ -5,15 +5,15 @@ using WebApplication1.Services;
 namespace WebApplication1.Controllers {
     [Route("api/[controller]/")]
     [ApiController]
-    public class FoodController : ControllerBase {
+    public class RestaurantController : ControllerBase {
         //getAll
         [HttpGet]
         public IActionResult GetAll() {
             try {
                 /*string? bearerToken = Request.Headers["Authorization"];
                 return Ok(Convert.ToBase64String(Guid.NewGuid().ToByteArray()));
-                if(bearerToken == null) return Unauthorized(null);*/
-                return Ok(FoodsServices.GetAll());
+                if (bearerToken == null) return Unauthorized(null);*/
+                return Ok(RestaurantsServices.GetAll());
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
@@ -23,7 +23,7 @@ namespace WebApplication1.Controllers {
         [HttpGet("{id}")]
         public IActionResult GetSingle(long id) {
             try {
-                Food? item = FoodsServices.GetSingle(id);
+                Restaurant? item = RestaurantsServices.GetSingle(id);
                 if (item != null) return Ok(item);
                 else return NotFound(null);
 
@@ -34,9 +34,9 @@ namespace WebApplication1.Controllers {
 
         //create
         [HttpPost]
-        public IActionResult AddItem(Food newItem) {
+        public IActionResult AddItem(Restaurant newItem) {
             try {
-                return Created(nameof(AddItem),FoodsServices.Create(newItem));
+                return Created(nameof(AddItem),RestaurantsServices.Create(newItem));
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
@@ -44,9 +44,9 @@ namespace WebApplication1.Controllers {
 
         //edit
         [HttpPatch("{id}")]
-        public IActionResult EditItem(long id,[FromBody] Food item) {
+        public IActionResult EditItem(long id,[FromBody] Restaurant item) {
             try {
-                Food? itemEdited = FoodsServices.Edit(id,item);
+                Restaurant? itemEdited = RestaurantsServices.Edit(id,item);
                 if (itemEdited == null) return NotFound(null);
                 return Ok(itemEdited);
             } catch (Exception ex) {
@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers {
         [HttpDelete("{id}")]
         public IActionResult DeleteItem(long id) {
             try {
-                int changes = FoodsServices.Delete(id);
+                int changes = RestaurantsServices.Delete(id);
                 if (changes <= 0) return NotFound(null);
                 return NoContent();
             } catch (Exception ex) {
