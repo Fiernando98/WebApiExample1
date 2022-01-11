@@ -4,11 +4,11 @@ using System.Data.SQLite;
 
 namespace WebApplication1.Services {
     public class FoodsServices {
-        public static List<Food> GetAll() {
+        public static List<Food> GetAll(WhereSQL whereSQL) {
             try {
                 List<Food> list = new List<Food>();
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName}",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 list.Add(new Food {
@@ -30,10 +30,10 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static Food? GetSingle(long id) {
+        public static Food? GetSingle(WhereSQL whereSQL) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} WHERE {FoodSQLTable.id} = {id}",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} {whereSQL?.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 return new Food {
@@ -79,16 +79,15 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static Food? Edit(long id,Food item) {
+        public static Food? Edit(WhereSQL whereSQL,Food item) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"UPDATE {FoodSQLTable.tableName} SET {FoodSQLTable.name} = ?, {FoodSQLTable.description} = ?, {FoodSQLTable.calories} = ? WHERE {FoodSQLTable.id} = {id}",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"UPDATE {FoodSQLTable.tableName} SET {FoodSQLTable.name} = ?, {FoodSQLTable.description} = ?, {FoodSQLTable.calories} = ? {whereSQL?.GetClausule()}",dbContext)) {
                         command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.name}",item.Name));
                         command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.description}",item.Description));
                         command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.calories}",item.Calories));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) return null;
-                        item.ID = id;
                         return item;
                     }
                 }
@@ -97,10 +96,10 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static int Delete(long id) {
+        public static int Delete(WhereSQL whereSQL) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"DELETE FROM {FoodSQLTable.tableName} WHERE {FoodSQLTable.id} = {id}",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"DELETE FROM {FoodSQLTable.tableName} {whereSQL?.GetClausule()}",dbContext)) {
                         return command.ExecuteNonQuery();
                     }
                 }

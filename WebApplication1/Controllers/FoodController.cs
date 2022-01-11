@@ -12,7 +12,10 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                return Ok(FoodsServices.GetAll());
+                return Ok(FoodsServices.GetAll(new WhereSQL {
+                    SQLClauses = new string[] {
+                    }
+                }));
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
@@ -24,7 +27,11 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                Food? item = FoodsServices.GetSingle(id);
+                Food? item = FoodsServices.GetSingle(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{FoodSQLTable.id} = {id}"
+                    }
+                });
                 if (item == null) return NotFound(null);
                 return Ok(item);
 
@@ -51,7 +58,12 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                Food? itemEdited = FoodsServices.Edit(id,item);
+                item.ID = id;
+                Food? itemEdited = FoodsServices.Edit(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{FoodSQLTable.id} = {id}"
+                    }
+                },item);
                 if (itemEdited == null) return NotFound(null);
                 return Ok(itemEdited);
             } catch (Exception ex) {
@@ -65,7 +77,11 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                int changes = FoodsServices.Delete(id);
+                int changes = FoodsServices.Delete(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{FoodSQLTable.id} = {id}"
+                    }
+                });
                 if (changes <= 0) return NotFound(null);
                 return NoContent();
             } catch (Exception ex) {

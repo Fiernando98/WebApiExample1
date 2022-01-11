@@ -27,10 +27,10 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static User? GetSingle(string email) {
+        public static User? GetSingle(WhereSQL whereSQL) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName} WHERE {UserSQLTable.email} = '{email}'",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 return new User {
