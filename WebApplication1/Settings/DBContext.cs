@@ -6,15 +6,15 @@ namespace WebApplication1.Settings {
         private const string DBName = "db.sqlite";
 
         public static SQLiteConnection GetInstance() {
-            SQLiteConnection db = new SQLiteConnection(string.Format("Data Source={0};Version=3;",Path.Combine(Dir,DBName)));
+            SQLiteConnection db = new SQLiteConnection(string.Format("Data Source={0};Version=3;",Path.Combine(Dir,DBName).Replace(@"\","/")));
             db.Open();
             TurnOnFK(db);
             return db;
         }
 
         public static void ConectDB(string pathServer) {
-            Directory.CreateDirectory(pathServer);
-            string fullPath = Path.Combine(pathServer,DBName);
+            Directory.CreateDirectory(pathServer.Replace(@"\","/"));
+            string fullPath = Path.Combine(pathServer,DBName).Replace(@"\","/");
             if (!File.Exists(Path.GetFullPath(fullPath))) {
                 SQLiteConnection.CreateFile(fullPath);
             }

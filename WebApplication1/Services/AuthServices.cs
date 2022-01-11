@@ -23,18 +23,38 @@ namespace WebApplication1.Services {
         }
         public static bool ValidateToken(string? token) {
             if (token != null) {
-                return _CheckToken(token.Split("bearer ").LastOrDefault());
+                try {
+                    using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {AuthTokenSQLTable.tableName} WHERE {AuthTokenSQLTable.token} = '{token.Split(" ").LastOrDefault()}'",dbContext)) {
+                            using (SQLiteDataReader reader = command.ExecuteReader()) {
+                                while (reader.Read()) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception) {
+                    throw;
+                }
             }
             return false;
         }
 
-        private static bool _CheckToken(string? token) {
+        public static UserRegistrer? GetUserRegistrer(string email) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {AuthTokenSQLTable.tableName} WHERE {AuthTokenSQLTable.token} = {token}",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName} WHERE {UserSQLTable.email} = '{email}'",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return true;
+                                return new UserRegistrer {
+                                    ID = Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
+                                    FirstName = reader[$"{UserSQLTable.firstName}"].ToString(),
+                                    LastName = reader[$"{UserSQLTable.lastName}"].ToString(),
+                                    Email = reader[$"{UserSQLTable.email}"].ToString(),
+                                    Phone = reader[$"{UserSQLTable.phone}"].ToString(),
+                                    EncryptGUID = reader[$"{UserSQLTable.encryptGUID}"].ToString(),
+                                    Password = reader[$"{UserSQLTable.passwordEncrypted}"].ToString()
+                                };
                             }
                         }
                     }
@@ -42,7 +62,7 @@ namespace WebApplication1.Services {
             } catch (Exception) {
                 throw;
             }
-            return false;
+            return null;
         }
     }
 }

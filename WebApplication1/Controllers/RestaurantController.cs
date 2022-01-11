@@ -10,6 +10,8 @@ namespace WebApplication1.Controllers {
         [HttpGet]
         public IActionResult GetAll() {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 return Ok(RestaurantsServices.GetAll());
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
@@ -20,6 +22,8 @@ namespace WebApplication1.Controllers {
         [HttpGet("{id:long}")]
         public IActionResult GetSingle(long id) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 Restaurant? item = RestaurantsServices.GetSingle(id);
                 if (item != null) return NotFound(null);
                 return Ok(item);
@@ -33,6 +37,8 @@ namespace WebApplication1.Controllers {
         [HttpPost]
         public IActionResult AddItem(Restaurant newItem) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 return Created(nameof(AddItem),RestaurantsServices.Create(newItem));
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
@@ -43,6 +49,8 @@ namespace WebApplication1.Controllers {
         [HttpPatch("{id:long}")]
         public IActionResult EditItem(long id,[FromBody] Restaurant item) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 Restaurant? itemEdited = RestaurantsServices.Edit(id,item);
                 if (itemEdited == null) return NotFound(null);
                 return Ok(itemEdited);
@@ -55,6 +63,8 @@ namespace WebApplication1.Controllers {
         [HttpDelete("{id:long}")]
         public IActionResult DeleteItem(long id) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 int changes = RestaurantsServices.Delete(id);
                 if (changes <= 0) return NotFound(null);
                 return NoContent();

@@ -14,6 +14,8 @@ namespace WebApplication1.Controllers {
         [HttpPost]
         public IActionResult AddItem(IFormFile file) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 return Ok(FilesServices.Create(file,$@"{_env.ContentRootPath}files/").Result);
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);

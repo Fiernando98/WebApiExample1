@@ -20,7 +20,7 @@
               $"{passwordEncrypted} TEXT"
       };
 
-        public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ", _table)});";
+        public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";
     }
 
     public class User {
@@ -34,7 +34,12 @@
     public class UserRegistrer : User {
         public string? EncryptGUID { get; set; }
         public string? Password { get; set; }
-
-        public User getUser() => this;
+        public User getUser() => new User {
+            ID = ID,
+            FirstName = FirstName,
+            LastName = LastName,
+            Email = Email,
+            Phone = Phone
+        };
     }
 }

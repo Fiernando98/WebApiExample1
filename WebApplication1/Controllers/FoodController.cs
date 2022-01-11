@@ -10,6 +10,8 @@ namespace WebApplication1.Controllers {
         [HttpGet]
         public IActionResult GetAll() {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 return Ok(FoodsServices.GetAll());
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
@@ -20,6 +22,8 @@ namespace WebApplication1.Controllers {
         [HttpGet("{id:long}")]
         public IActionResult GetSingle(long id) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 Food? item = FoodsServices.GetSingle(id);
                 if (item == null) return NotFound(null);
                 return Ok(item);
@@ -33,6 +37,8 @@ namespace WebApplication1.Controllers {
         [HttpPost]
         public IActionResult AddItem(Food newItem) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 return Created(nameof(AddItem),FoodsServices.Create(newItem));
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
@@ -43,6 +49,8 @@ namespace WebApplication1.Controllers {
         [HttpPatch("{id:long}")]
         public IActionResult EditItem(long id,[FromBody] Food item) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 Food? itemEdited = FoodsServices.Edit(id,item);
                 if (itemEdited == null) return NotFound(null);
                 return Ok(itemEdited);
@@ -55,6 +63,8 @@ namespace WebApplication1.Controllers {
         [HttpDelete("{id:long}")]
         public IActionResult DeleteItem(long id) {
             try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
                 int changes = FoodsServices.Delete(id);
                 if (changes <= 0) return NotFound(null);
                 return NoContent();
