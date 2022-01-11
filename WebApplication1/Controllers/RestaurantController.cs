@@ -21,8 +21,8 @@ namespace WebApplication1.Controllers {
         public IActionResult GetSingle(long id) {
             try {
                 Restaurant? item = RestaurantsServices.GetSingle(id);
-                if (item != null) return Ok(item);
-                else return NotFound(null);
+                if (item != null) return NotFound(null);
+                return Ok(item);
 
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);

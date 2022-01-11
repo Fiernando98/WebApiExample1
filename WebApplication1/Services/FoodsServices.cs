@@ -8,15 +8,15 @@ namespace WebApplication1.Services {
             try {
                 List<Food> list = new List<Food>();
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 list.Add(new Food {
-                                    ID = Convert.ToInt64(reader["id"].ToString()),
-                                    Restaurant = (reader["id_restaurant"] != null) ? RestaurantsServices.GetSingle(Convert.ToInt64(reader["id_restaurant"].ToString())) : null,
-                                    Name = reader["name"].ToString(),
-                                    Description = reader["description"].ToString(),
-                                    Calories = Convert.ToDouble(reader["calories"])
+                                    ID = Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),
+                                    Restaurant = (reader[$"{FoodSQLTable.idRestaurant}"] != null) ? RestaurantsServices.GetSingle(Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())) : null,
+                                    Name = reader[$"{FoodSQLTable.name}"].ToString(),
+                                    Description = reader[$"{FoodSQLTable.description}"].ToString(),
+                                    Calories = Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])
                                 });
                             }
                         }
@@ -31,15 +31,15 @@ namespace WebApplication1.Services {
         public static Food? GetSingle(long id) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("SELECT * FROM Foods WHERE id = " + id,dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} WHERE {FoodSQLTable.id} = {id}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 return new Food {
-                                    ID = Convert.ToInt64(reader["id"].ToString()),
-                                    Restaurant = RestaurantsServices.GetSingle(Convert.ToInt64(reader["id_restaurant"].ToString())),
-                                    Name = reader["name"].ToString(),
-                                    Description = reader["description"].ToString(),
-                                    Calories = Convert.ToDouble(reader["calories"])
+                                    ID = Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),
+                                    Restaurant = RestaurantsServices.GetSingle(Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())),
+                                    Name = reader[$"{FoodSQLTable.name}"].ToString(),
+                                    Description = reader[$"{FoodSQLTable.description}"].ToString(),
+                                    Calories = Convert.ToDouble(reader[$"{FoodSQLTable.description}"])
                                 };
                             }
                         }
@@ -50,18 +50,19 @@ namespace WebApplication1.Services {
             }
             return null;
         }
-        public static Food? Create(Food newItem) {
+
+        public static Food Create(Food newItem) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foods (id_restaurant, name, description, calories) VALUES (?, ?, ?, ?)",dbContext)) {
-                        command.Parameters.Add(new SQLiteParameter("id_restaurant",newItem.Restaurant?.ID));
-                        command.Parameters.Add(new SQLiteParameter("name",newItem.Name));
-                        command.Parameters.Add(new SQLiteParameter("description",newItem.Description));
-                        command.Parameters.Add(new SQLiteParameter("calories",newItem.Calories));
+                    using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {FoodSQLTable.tableName} ({FoodSQLTable.idRestaurant}, {FoodSQLTable.name}, {FoodSQLTable.description}, {FoodSQLTable.calories}) VALUES (?, ?, ?, ?)",dbContext)) {
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.idRestaurant}",newItem.Restaurant?.ID));
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.name}",newItem.Name));
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.description}",newItem.Description));
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.calories}",newItem.Calories));
                         int changes = command.ExecuteNonQuery();
-                        if (changes <= 0) return null;
+                        if (changes <= 0) throw new Exception("Error en base de datos");
                         newItem.ID = dbContext.LastInsertRowId;
-                        if(newItem.Restaurant?.ID != null) {
+                        if (newItem.Restaurant?.ID != null) {
                             newItem.Restaurant = RestaurantsServices.GetSingle(newItem.Restaurant.ID);
                         }
                         return newItem;
@@ -75,10 +76,10 @@ namespace WebApplication1.Services {
         public static Food? Edit(long id,Food item) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("UPDATE Foods SET name = ?, description = ?, calories = ? WHERE ID = " + id,dbContext)) {
-                        command.Parameters.Add(new SQLiteParameter("name",item.Name));
-                        command.Parameters.Add(new SQLiteParameter("description",item.Description));
-                        command.Parameters.Add(new SQLiteParameter("calories",item.Calories));
+                    using (SQLiteCommand command = new SQLiteCommand($"UPDATE {FoodSQLTable.tableName} SET {FoodSQLTable.name} = ?, {FoodSQLTable.description} = ?, {FoodSQLTable.calories} = ? WHERE {FoodSQLTable.id} = {id}",dbContext)) {
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.name}",item.Name));
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.description}",item.Description));
+                        command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.calories}",item.Calories));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) return null;
                         item.ID = id;
@@ -93,7 +94,7 @@ namespace WebApplication1.Services {
         public static int Delete(long id) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Foods WHERE id = " + id,dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"DELETE FROM {FoodSQLTable.tableName} WHERE {FoodSQLTable.id} = {id}",dbContext)) {
                         return command.ExecuteNonQuery();
                     }
                 }
