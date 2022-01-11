@@ -11,8 +11,9 @@ namespace WebApplication1.Settings {
             return db;
         }
 
-        public static void ConectDB(string serverPath) {
-            string fullPath = Path.Combine(serverPath,DBName);
+        public static void ConectDB(string pathServer) {
+            Directory.CreateDirectory(pathServer);
+            string fullPath = Path.Combine(pathServer,DBName);
             if (!File.Exists(Path.GetFullPath(fullPath))) {
                 SQLiteConnection.CreateFile(fullPath);
             }
