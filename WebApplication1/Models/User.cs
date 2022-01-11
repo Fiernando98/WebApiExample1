@@ -20,28 +20,7 @@
               $"{passwordEncrypted} TEXT"
       };
 
-        public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";
-    }
-
-    public class UserRegistrer {
-        public long ID { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? Email { get; set; }
-        public string? Phone { get; set; }
-        public string? EncryptGUID { get; set; }
-        public string? Password { get; set; }
-
-
-        public User toPrivatedUser() {
-            return new User {
-                ID = ID,
-                FirstName = FirstName,
-                LastName = LastName,
-                Email = Email,
-                Phone = Phone
-            };
-        }
+        public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ", _table)});";
     }
 
     public class User {
@@ -50,5 +29,12 @@
         public string? LastName { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
+    }
+
+    public class UserRegistrer : User {
+        public string? EncryptGUID { get; set; }
+        public string? Password { get; set; }
+
+        public User getUser() => this;
     }
 }

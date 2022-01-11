@@ -20,14 +20,14 @@ namespace WebApplication1.Controllers {
 
                 UserRegistrer? userRegistrer = UsersServices.GetSingle(username);
                 if (userRegistrer == null) return NotFound("Cuenta no encontrada");
-                if (!password.Equals(EncryptionServices.Decrypt(userRegistrer.Password!,userRegistrer.EncryptGUID!)))
+                if (!password.Equals(EncryptionServices.Decrypt(userRegistrer.Password!, userRegistrer.EncryptGUID!)))
                     return Unauthorized("Contraseña invalida");
                 return Ok(AuthServices.Create(new AuthToken {
                     Token = Guid.NewGuid().ToString(),
-                    User = userRegistrer.toPrivatedUser()
+                    User = userRegistrer.getUser()
                 }));
             } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

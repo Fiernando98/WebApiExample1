@@ -19,7 +19,7 @@ namespace WebApplication1.Services {
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) throw new Exception("Error en base de datos");
                         newItem.ID = dbContext.LastInsertRowId;
-                        return newItem.toPrivatedUser();
+                        return newItem.getUser();
                     }
                 }
             } catch (Exception) {
