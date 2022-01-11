@@ -9,7 +9,7 @@ namespace WebApplication1.Services {
                 if (newItem.Length <= 0) throw new Exception("Archivo inválido");
                 Directory.CreateDirectory(pathServer);
                 string fileName = newItem.FileName.Split("/").LastOrDefault()!;
-                string filePath = Path.Combine(pathServer,fileName);
+                string filePath = Path.Combine(pathServer,fileName).Replace(@"\","/");
                 using (Stream fileStream = new FileStream(filePath,FileMode.Create)) {
                     await newItem.CopyToAsync(fileStream);
                 }
@@ -21,7 +21,7 @@ namespace WebApplication1.Services {
                         long newID = dbContext.LastInsertRowId;
                         return new Files {
                             ID = newID,
-                            Path = new Uri(filePath)
+                            Path = filePath
                         };
                     }
                 }

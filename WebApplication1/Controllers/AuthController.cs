@@ -6,7 +6,7 @@ using WebApplication1.Services;
 namespace WebApplication1.Controllers {
     [Route("api/[controller]/")]
     [ApiController]
-    public class AuthController : ControllerBase {
+    public class AuthController : Controller {
         [HttpGet("login/")]
         public IActionResult GetAll() {
             try {

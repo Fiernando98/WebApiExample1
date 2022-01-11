@@ -5,7 +5,7 @@ using WebApplication1.Services;
 namespace WebApplication1.Controllers {
     [Route("api/[controller]/")]
     [ApiController]
-    public class RestaurantController : ControllerBase {
+    public class RestaurantController : Controller {
         //getAll
         [HttpGet]
         public IActionResult GetAll() {

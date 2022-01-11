@@ -2,10 +2,11 @@
 using WebApplication1.Models;
 namespace WebApplication1.Settings {
     public class DBContext {
+        private const string Dir = "database/";
         private const string DBName = "db.sqlite";
 
         public static SQLiteConnection GetInstance() {
-            SQLiteConnection db = new SQLiteConnection(string.Format("Data Source={0};Version=3;",DBName));
+            SQLiteConnection db = new SQLiteConnection(string.Format("Data Source={0};Version=3;",Path.Combine(Dir,DBName)));
             db.Open();
             TurnOnFK(db);
             return db;

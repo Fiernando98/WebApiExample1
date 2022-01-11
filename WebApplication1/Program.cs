@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 WebApplication app = builder.Build();
-DBContext.ConectDB($@"{app.Environment.ContentRootPath}\database\");
+DBContext.ConectDB($@"{app.Environment.ContentRootPath}database/");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

@@ -15,6 +15,6 @@
 
     public class Files {
         public long ID { get; set; }
-        public Uri? Path { get; set; }
+        public string? Path { get; set; }
     }
 }
