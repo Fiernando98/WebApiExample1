@@ -4,17 +4,17 @@ using System.Data.SQLite;
 
 namespace WebApplication1.Services {
     public class UsersServices {
-        public static User Create(UserRegistrer newItem) {
+        public static User Create(UserLogin newItem) {
             try {
-                newItem.EncryptGUID = Guid.NewGuid().ToString();
-                newItem.Password = EncryptionServices.Encrypt(newItem.Password!,newItem.EncryptGUID);
+                string encryptGUID = Guid.NewGuid().ToString();
+                newItem.Password = EncryptionServices.Encrypt(newItem.Password!,encryptGUID);
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
                     using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {UserSQLTable.tableName} ({UserSQLTable.firstName}, {UserSQLTable.lastName}, {UserSQLTable.email}, {UserSQLTable.phone}, {UserSQLTable.encryptGUID}, {UserSQLTable.passwordEncrypted}) VALUES (?, ?, ?, ?, ?, ?)",dbContext)) {
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.firstName}",newItem.FirstName));
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.lastName}",newItem.LastName));
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.email}",newItem.Email));
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.phone}",newItem.Phone));
-                        command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.encryptGUID}",newItem.EncryptGUID));
+                        command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.encryptGUID}",encryptGUID));
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.passwordEncrypted}",newItem.Password));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) throw new Exception("Error en base de datos");

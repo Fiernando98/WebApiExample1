@@ -17,7 +17,7 @@
               $"{email} TEXT NOT NULL UNIQUE",
               $"{phone} TEXT",
               $"{encryptGUID} TEXT NOT NULL",
-              $"{passwordEncrypted} TEXT"
+              $"{passwordEncrypted} TEXT NOT NULL"
       };
 
         public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";
@@ -31,8 +31,7 @@
         public string? Phone { get; set; }
     }
 
-    public class UserRegistrer : User {
-        public string? EncryptGUID { get; set; }
+    public class UserLogin : User {
         public string? Password { get; set; }
         public User getUser() => new User {
             ID = ID,
@@ -41,5 +40,10 @@
             Email = Email,
             Phone = Phone
         };
+    }
+
+    public class UserRegistrer : UserLogin {
+        public string? EncryptGUID { get; set; }
+        public UserLogin toUser() => (UserLogin)this.getUser();
     }
 }

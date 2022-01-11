@@ -8,7 +8,7 @@ namespace WebApplication1.Controllers {
     public class UserController : Controller {
         //create
         [HttpPost]
-        public IActionResult AddItem(UserRegistrer newItem) {
+        public IActionResult AddItem(UserLogin newItem) {
             try {
                 return Created(nameof(AddItem),UsersServices.Create(newItem));
             } catch (Exception ex) {
