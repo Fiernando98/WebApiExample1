@@ -41,6 +41,9 @@ bld/
 # Files from multipart
 .WebApplication1/files/
 
+# Files from database
+.WebApplication1/database/
+
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
