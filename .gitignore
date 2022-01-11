@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+WebApplication1/files/
+WebApplication1/database/
+
 # User-specific files
 *.rsuser
 *.suo
