@@ -8,8 +8,9 @@ namespace WebApplication1.Services {
         public static AuthToken Create(AuthToken newItem) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {AuthTokenSQLTable.tableName} ({AuthTokenSQLTable.token}, {AuthTokenSQLTable.idUser}) VALUES (?, ?)",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {AuthTokenSQLTable.tableName} ({AuthTokenSQLTable.token}, {AuthTokenSQLTable.dateTimeCreated}, {AuthTokenSQLTable.idUser}) VALUES (?, ?, ?)",dbContext)) {
                         command.Parameters.Add(new SQLiteParameter($"{AuthTokenSQLTable.token}",newItem.Token));
+                        command.Parameters.Add(new SQLiteParameter($"{AuthTokenSQLTable.dateTimeCreated}",newItem.DateTimeCreated.ToFileTimeUtc()));
                         command.Parameters.Add(new SQLiteParameter($"{AuthTokenSQLTable.idUser}",newItem.User?.ID));
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) throw new Exception("Error en base de datos");
