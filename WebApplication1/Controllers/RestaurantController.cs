@@ -24,7 +24,12 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                Restaurant? item = RestaurantsServices.GetSingle(id);
+                Restaurant? item = RestaurantsServices.GetSingle(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{RestaurantSQLTable.id} = {id}",
+                        $"{RestaurantSQLTable.name} = 'hola'"
+                    }
+                });
                 if (item != null) return NotFound(null);
                 return Ok(item);
 

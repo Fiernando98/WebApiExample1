@@ -13,7 +13,9 @@ namespace WebApplication1.Services {
                             while (reader.Read()) {
                                 list.Add(new Food {
                                     ID = Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),
-                                    Restaurant = (reader[$"{FoodSQLTable.idRestaurant}"] != null) ? RestaurantsServices.GetSingle(Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())) : null,
+                                    Restaurant = (reader[$"{FoodSQLTable.idRestaurant}"] != null) ? RestaurantsServices.GetSingle(new WhereSQL {
+                                        SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
+                                    }) : null,
                                     Name = reader[$"{FoodSQLTable.name}"].ToString(),
                                     Description = reader[$"{FoodSQLTable.description}"].ToString(),
                                     Calories = Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])
@@ -36,7 +38,9 @@ namespace WebApplication1.Services {
                             while (reader.Read()) {
                                 return new Food {
                                     ID = Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),
-                                    Restaurant = RestaurantsServices.GetSingle(Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())),
+                                    Restaurant = RestaurantsServices.GetSingle(new WhereSQL {
+                                        SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
+                                    }),
                                     Name = reader[$"{FoodSQLTable.name}"].ToString(),
                                     Description = reader[$"{FoodSQLTable.description}"].ToString(),
                                     Calories = Convert.ToDouble(reader[$"{FoodSQLTable.description}"])
@@ -63,7 +67,9 @@ namespace WebApplication1.Services {
                         if (changes <= 0) throw new Exception("Error en base de datos");
                         newItem.ID = dbContext.LastInsertRowId;
                         if (newItem.Restaurant?.ID != null) {
-                            newItem.Restaurant = RestaurantsServices.GetSingle(newItem.Restaurant.ID);
+                            newItem.Restaurant = RestaurantsServices.GetSingle(new WhereSQL {
+                                SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {newItem.Restaurant.ID}" }
+                            });
                         }
                         return newItem;
                     }

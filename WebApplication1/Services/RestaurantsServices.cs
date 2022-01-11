@@ -25,10 +25,12 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static Restaurant? GetSingle(long id) {
+        public static Restaurant? GetSingle(WhereSQL whereSQL) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {RestaurantSQLTable.tableName} WHERE {RestaurantSQLTable.id} = {id}",dbContext)) {
+                    string where = whereSQL.GetClausule();
+                    throw new Exception(where);
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {RestaurantSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
                                 return new Restaurant {
