@@ -1,15 +1,17 @@
 using WebApplication1.Settings;
+using Microsoft.AspNetCore.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-DBContext.ConectDB();
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
+DBContext.ConectDB(app.Environment.ContentRootPath);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

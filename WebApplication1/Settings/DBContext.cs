@@ -11,9 +11,10 @@ namespace WebApplication1.Settings {
             return db;
         }
 
-        public static void ConectDB() {
-            if (!File.Exists(Path.GetFullPath(DBName))) {
-                SQLiteConnection.CreateFile(DBName);
+        public static void ConectDB(string serverPath) {
+            string fullPath = Path.Combine(serverPath,DBName);
+            if (!File.Exists(Path.GetFullPath(fullPath))) {
+                SQLiteConnection.CreateFile(fullPath);
             }
             using (SQLiteConnection dbContext = GetInstance()) {
                 CreateTables(dbContext);
@@ -48,6 +49,7 @@ namespace WebApplication1.Settings {
             list.Add(AuthTokenSQLTable.toCreateQuery);
             list.Add(RestaurantSQLTable.toCreateQuery);
             list.Add(FoodSQLTable.toCreateQuery);
+            list.Add(FilesSQLTable.toCreateQuery);
             return list;
         }
     }
