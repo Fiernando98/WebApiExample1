@@ -1,5 +1,4 @@
 using WebApplication1.Settings;
-using Microsoft.AspNetCore.Hosting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
