@@ -75,5 +75,23 @@ namespace WebApplication1.Controllers {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
             }
         }
+
+        //delete
+        [HttpDelete("{id:long}")]
+        public IActionResult DeleteItem(long id) {
+            try {
+                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                    return Unauthorized("Credenciales inválidas");
+                bool isSuccessfully = FilesServices.Delete(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{FilesSQLTable.id} = {id}"
+                    }
+                });
+                if (!isSuccessfully) return NotFound(null);
+                return NoContent();
+            } catch (Exception ex) {
+                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            }
+        }
     }
 }

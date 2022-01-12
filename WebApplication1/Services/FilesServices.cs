@@ -107,6 +107,25 @@ namespace WebApplication1.Services {
                 throw;
             }
         }
+
+        public static bool Delete(WhereSQL whereSQL) {
+            try {
+                Files? fileToDelete = GetSingle(whereSQL);
+                if (fileToDelete == null) return false;
+                using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                    using (SQLiteCommand command = new SQLiteCommand($"DELETE FROM {FilesSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
+                        bool correct = command.ExecuteNonQuery() > 0;
+                        if (!correct) return false;
+                        if (File.Exists(fileToDelete.Path)) {
+                            File.Delete(fileToDelete.Path);
+                        }
+                        return true;
+                    }
+                }
+            } catch (Exception) {
+                throw;
+            }
+        }
     }
 }
 

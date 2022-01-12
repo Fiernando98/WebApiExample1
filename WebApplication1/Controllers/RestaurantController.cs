@@ -77,12 +77,12 @@ namespace WebApplication1.Controllers {
             try {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
-                int changes = RestaurantsServices.Delete(new WhereSQL {
+                bool isSuccessfully = RestaurantsServices.Delete(new WhereSQL {
                     SQLClauses = new string[] {
                         $"{RestaurantSQLTable.id} = {id}"
                     }
                 });
-                if (changes <= 0) return NotFound(null);
+                if (!isSuccessfully) return NotFound(null);
                 return NoContent();
             } catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);

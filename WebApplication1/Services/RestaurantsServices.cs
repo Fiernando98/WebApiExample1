@@ -75,11 +75,11 @@ namespace WebApplication1.Services {
             }
         }
 
-        public static int Delete(WhereSQL whereSQL) {
+        public static bool Delete(WhereSQL whereSQL) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
                     using (SQLiteCommand command = new SQLiteCommand($"DELETE FROM {RestaurantSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
-                        return command.ExecuteNonQuery();
+                        return command.ExecuteNonQuery() > 0;
                     }
                 }
             } catch (Exception) {
