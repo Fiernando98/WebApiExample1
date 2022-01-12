@@ -25,8 +25,10 @@ namespace WebApplication1.Services {
                         };
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -38,8 +40,10 @@ namespace WebApplication1.Services {
                     await stream.ReadAsync(buffer,0,buffer.Length);
                 }
                 return buffer;
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -67,8 +71,10 @@ namespace WebApplication1.Services {
                     }
                 }
                 return list;
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -86,8 +92,10 @@ namespace WebApplication1.Services {
                         }
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
             return null;
         }
@@ -103,8 +111,10 @@ namespace WebApplication1.Services {
                 }
 
                 return MimeTypes.map[extension] ?? "text/plain";
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -122,8 +132,10 @@ namespace WebApplication1.Services {
                         return true;
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
     }

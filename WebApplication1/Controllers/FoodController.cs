@@ -16,8 +16,8 @@ namespace WebApplication1.Controllers {
                     SQLClauses = new string[] {
                     }
                 }));
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
 
@@ -34,9 +34,8 @@ namespace WebApplication1.Controllers {
                 });
                 if (item == null) return NotFound(null);
                 return Ok(item);
-
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
 
@@ -47,8 +46,8 @@ namespace WebApplication1.Controllers {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
                 return Created(nameof(AddItem),FoodsServices.Create(newItem));
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
 
@@ -59,15 +58,14 @@ namespace WebApplication1.Controllers {
                 if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
                     return Unauthorized("Credenciales inválidas");
                 item.ID = id;
-                Food? itemEdited = FoodsServices.Edit(new WhereSQL {
+                Food itemEdited = FoodsServices.Edit(new WhereSQL {
                     SQLClauses = new string[] {
                         $"{FoodSQLTable.id} = {id}"
                     }
                 },item);
-                if (itemEdited == null) return NotFound(null);
                 return Ok(itemEdited);
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
 
@@ -84,8 +82,8 @@ namespace WebApplication1.Controllers {
                 });
                 if (!isSuccessfully) return NotFound(null);
                 return NoContent();
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
     }

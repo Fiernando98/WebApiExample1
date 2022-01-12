@@ -11,8 +11,8 @@ namespace WebApplication1.Controllers {
         public IActionResult AddItem(UserLogin newItem) {
             try {
                 return Created(nameof(AddItem),UsersServices.Create(newItem));
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
     }

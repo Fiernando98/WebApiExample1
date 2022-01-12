@@ -17,13 +17,15 @@ namespace WebApplication1.Services {
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.encryptGUID}",encryptGUID));
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.passwordEncrypted}",newItem.Password));
                         int changes = command.ExecuteNonQuery();
-                        if (changes <= 0) throw new Exception("Error en base de datos");
+                        if (changes <= 0) throw new HttpResponseException(StatusCodes.Status400BadRequest);
                         newItem.ID = dbContext.LastInsertRowId;
                         return newItem.getUser();
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -44,8 +46,10 @@ namespace WebApplication1.Services {
                         }
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
             return null;
         }

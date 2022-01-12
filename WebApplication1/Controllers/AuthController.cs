@@ -11,7 +11,7 @@ namespace WebApplication1.Controllers {
         public IActionResult GetAll() {
             try {
                 string? basicAuth = Request.Headers["Authorization"];
-                if (basicAuth == null) return Unauthorized(null);
+                if (basicAuth == null) throw new HttpResponseException(statusCode: StatusCodes.Status401Unauthorized);
 
                 byte[] bytes = Convert.FromBase64String(basicAuth.Split("Basic ").LastOrDefault()!);
                 string[] decodedString = Encoding.UTF8.GetString(bytes).Split(":");
@@ -19,15 +19,15 @@ namespace WebApplication1.Controllers {
                 string password = decodedString.LastOrDefault()!;
 
                 UserRegistrer? userRegistrer = AuthServices.GetUserRegistrer(username);
-                if (userRegistrer == null) return NotFound("Cuenta no encontrada");
+                if (userRegistrer == null) throw new HttpResponseException(statusCode: StatusCodes.Status404NotFound,error: "Cuenta no encontrada");
                 if (!password.Equals(EncryptionServices.Decrypt(userRegistrer.Password!,userRegistrer.EncryptGUID!)))
-                    return Unauthorized("Contraseña invalida");
+                    throw new HttpResponseException(statusCode: StatusCodes.Status401Unauthorized,error: "Contraseña inválida");
                 return Ok(AuthServices.Create(new AuthToken {
                     Token = Guid.NewGuid().ToString(),
                     User = userRegistrer.getUser()
                 }));
-            } catch (Exception ex) {
-                return StatusCode(StatusCodes.Status500InternalServerError,ex.Message);
+            } catch (HttpResponseException httpError) {
+                return StatusCode(httpError.StatusCode,httpError.Error);
             }
         }
     }

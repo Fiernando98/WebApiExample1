@@ -17,8 +17,10 @@ namespace WebApplication1.Services {
                         return newItem;
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
         public static bool ValidateToken(string? token) {
@@ -33,8 +35,10 @@ namespace WebApplication1.Services {
                             }
                         }
                     }
-                } catch (Exception) {
+                } catch (HttpResponseException) {
                     throw;
+                } catch (Exception ex) {
+                    throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
                 }
             }
             return false;
@@ -59,8 +63,10 @@ namespace WebApplication1.Services {
                         }
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
             return null;
         }

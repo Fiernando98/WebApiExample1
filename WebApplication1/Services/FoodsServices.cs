@@ -25,8 +25,10 @@ namespace WebApplication1.Services {
                     }
                 }
                 return list;
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -49,8 +51,10 @@ namespace WebApplication1.Services {
                         }
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
             return null;
         }
@@ -74,12 +78,14 @@ namespace WebApplication1.Services {
                         return newItem;
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
-        public static Food? Edit(WhereSQL whereSQL,Food item) {
+        public static Food Edit(WhereSQL whereSQL,Food item) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
                     using (SQLiteCommand command = new SQLiteCommand($"UPDATE {FoodSQLTable.tableName} SET {FoodSQLTable.name} = ?, {FoodSQLTable.description} = ?, {FoodSQLTable.calories} = ? {whereSQL?.GetClausule()}",dbContext)) {
@@ -87,12 +93,14 @@ namespace WebApplication1.Services {
                         command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.description}",item.Description));
                         command.Parameters.Add(new SQLiteParameter($"{FoodSQLTable.calories}",item.Calories));
                         int changes = command.ExecuteNonQuery();
-                        if (changes <= 0) return null;
+                        if (changes <= 0) throw new HttpResponseException(StatusCodes.Status404NotFound);
                         return item;
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
 
@@ -103,8 +111,10 @@ namespace WebApplication1.Services {
                         return command.ExecuteNonQuery() > 0;
                     }
                 }
-            } catch (Exception) {
+            } catch (HttpResponseException) {
                 throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
             }
         }
     }
