@@ -32,7 +32,7 @@ namespace WebApplication1.Controllers {
                         $"{RestaurantSQLTable.id} = {id}"
                     }
                 });
-                if (item != null) return NotFound(null);
+                if (item == null) return NotFound(null);
                 return Ok(item);
 
             } catch (Exception ex) {
