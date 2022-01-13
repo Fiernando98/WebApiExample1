@@ -44,21 +44,42 @@ namespace WebApplication1.Services {
             return false;
         }
 
-        public static UserRegistrer? GetUserRegistrer(string email) {
+        public static User? GetUserByToken(string? token) {
+            if (token != null) {
+                try {
+                    using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                        using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {AuthTokenSQLTable.tableName} WHERE {AuthTokenSQLTable.token} = '{token.Split(" ").LastOrDefault()}'",dbContext)) {
+                            using (SQLiteDataReader reader = command.ExecuteReader()) {
+                                while (reader.Read()) {
+                                    return UsersServices.GetSingle(new WhereSQL {
+                                        SQLClauses = new string[] {
+                                            $"{UserSQLTable.id} = {Convert.ToInt64(reader[$"{AuthTokenSQLTable.idUser}"].ToString())}"
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (HttpResponseException) {
+                    throw;
+                } catch (Exception ex) {
+                    throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
+                }
+            }
+            return null;
+        }
+
+        public static UserRegistrer? GetUserRegistrerByToken(string? token) {
             try {
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
-                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName} WHERE {UserSQLTable.email} = '{email}'",dbContext)) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {AuthTokenSQLTable.tableName} WHERE {AuthTokenSQLTable.token} = '{token?.Split(" ").LastOrDefault()}'",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new UserRegistrer {
-                                    ID = Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
-                                    FirstName = reader[$"{UserSQLTable.firstName}"].ToString(),
-                                    LastName = reader[$"{UserSQLTable.lastName}"].ToString(),
-                                    Email = reader[$"{UserSQLTable.email}"].ToString(),
-                                    Phone = reader[$"{UserSQLTable.phone}"].ToString(),
-                                    EncryptGUID = reader[$"{UserSQLTable.encryptGUID}"].ToString(),
-                                    Password = reader[$"{UserSQLTable.passwordEncrypted}"].ToString()
-                                };
+                                return UsersServices.GetUserRegistrer(new WhereSQL {
+                                    SQLClauses = new string[] {
+                                            $"{UserSQLTable.id} = {Convert.ToInt64(reader[$"{AuthTokenSQLTable.idUser}"].ToString())}"
+                                        }
+                                });
                             }
                         }
                     }

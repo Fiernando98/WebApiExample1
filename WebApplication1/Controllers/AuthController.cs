@@ -11,17 +11,22 @@ namespace WebApplication1.Controllers {
         public IActionResult GetAll() {
             try {
                 string? basicAuth = Request.Headers["Authorization"];
-                if (basicAuth == null) throw new HttpResponseException(statusCode: StatusCodes.Status401Unauthorized);
+                if (basicAuth == null)
+                    return Unauthorized("No se proporcionaron las credenciales");
 
                 byte[] bytes = Convert.FromBase64String(basicAuth.Split("Basic ").LastOrDefault()!);
                 string[] decodedString = Encoding.UTF8.GetString(bytes).Split(":");
                 string username = decodedString.FirstOrDefault()!;
                 string password = decodedString.LastOrDefault()!;
 
-                UserRegistrer? userRegistrer = AuthServices.GetUserRegistrer(username);
-                if (userRegistrer == null) throw new HttpResponseException(statusCode: StatusCodes.Status404NotFound,error: "Cuenta no encontrada");
+                UserRegistrer? userRegistrer = UsersServices.GetUserRegistrer(new WhereSQL {
+                    SQLClauses = new string[] {
+                        $"{UserSQLTable.email} = '{username}'"
+                    }
+                });
+                if (userRegistrer == null) return NotFound("Cuenta no encontrada");
                 if (!password.Equals(EncryptionServices.Decrypt(userRegistrer.Password!,userRegistrer.EncryptGUID!)))
-                    throw new HttpResponseException(statusCode: StatusCodes.Status401Unauthorized,error: "Contraseña inválida");
+                    return Unauthorized("Contraseña inválida");
                 return Ok(AuthServices.Create(new AuthToken {
                     Token = Guid.NewGuid().ToString(),
                     User = userRegistrer.getUser()

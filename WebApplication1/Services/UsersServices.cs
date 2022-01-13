@@ -53,5 +53,52 @@ namespace WebApplication1.Services {
             }
             return null;
         }
+
+        public static UserRegistrer? GetUserRegistrer(WhereSQL whereSQL) {
+            try {
+                using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                    using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName}  {whereSQL?.GetClausule()}",dbContext)) {
+                        using (SQLiteDataReader reader = command.ExecuteReader()) {
+                            while (reader.Read()) {
+                                return new UserRegistrer {
+                                    ID = Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
+                                    FirstName = reader[$"{UserSQLTable.firstName}"].ToString(),
+                                    LastName = reader[$"{UserSQLTable.lastName}"].ToString(),
+                                    Email = reader[$"{UserSQLTable.email}"].ToString(),
+                                    Phone = reader[$"{UserSQLTable.phone}"].ToString(),
+                                    EncryptGUID = reader[$"{UserSQLTable.encryptGUID}"].ToString(),
+                                    Password = reader[$"{UserSQLTable.passwordEncrypted}"].ToString()
+                                };
+                            }
+                        }
+                    }
+                }
+            } catch (HttpResponseException) {
+                throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
+            }
+            return null;
+        }
+
+        public static void ChangePassword(WhereSQL whereSQL,string newPassword) {
+            try {
+                string encryptGUID = Guid.NewGuid().ToString();
+                string? passwordEncrypted = EncryptionServices.Encrypt(newPassword,encryptGUID);
+                if (passwordEncrypted == null) { throw new HttpResponseException(error: "Fallo en contraseña"); }
+                using (SQLiteConnection dbContext = DBContext.GetInstance()) {
+                    using (SQLiteCommand command = new SQLiteCommand($"UPDATE {UserSQLTable.tableName} SET {UserSQLTable.encryptGUID} = ?, {UserSQLTable.passwordEncrypted} = ? {whereSQL.GetClausule()}",dbContext)) {
+                        command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.encryptGUID}",encryptGUID));
+                        command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.passwordEncrypted}",passwordEncrypted));
+                        int changes = command.ExecuteNonQuery();
+                        if (changes <= 0) throw new HttpResponseException(StatusCodes.Status400BadRequest);
+                    }
+                }
+            } catch (HttpResponseException) {
+                throw;
+            } catch (Exception ex) {
+                throw new HttpResponseException(statusCode: StatusCodes.Status400BadRequest,error: ex.Message);
+            }
+        }
     }
 }

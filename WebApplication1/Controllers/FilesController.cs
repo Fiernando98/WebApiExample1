@@ -16,7 +16,8 @@ namespace WebApplication1.Controllers {
         [HttpPost]
         public IActionResult AddItem(IFormFile file) {
             try {
-                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                string? token = Request.Headers["Authorization"].ToString().Split(" ").LastOrDefault();
+                if (!AuthServices.ValidateToken(token))
                     return Unauthorized("Credenciales inválidas");
                 return Ok(FilesServices.Create(file,$@"{_env.ContentRootPath}files/").Result);
             } catch (HttpResponseException httpError) {
@@ -27,7 +28,8 @@ namespace WebApplication1.Controllers {
         [HttpGet]
         public IActionResult GetAll() {
             try {
-                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                string? token = Request.Headers["Authorization"].ToString().Split(" ").LastOrDefault();
+                if (!AuthServices.ValidateToken(token))
                     return Unauthorized("Credenciales inválidas");
                 return Ok(FilesServices.GetAll(new WhereSQL {
                     SQLClauses = new string[] {
@@ -41,7 +43,8 @@ namespace WebApplication1.Controllers {
         [HttpGet("{id:long}")]
         public IActionResult Get(long id) {
             try {
-                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                string? token = Request.Headers["Authorization"].ToString().Split(" ").LastOrDefault();
+                if (!AuthServices.ValidateToken(token))
                     return Unauthorized("Credenciales inválidas");
                 Files? item = FilesServices.GetSingle(new WhereSQL {
                     SQLClauses = new string[] {
@@ -58,7 +61,8 @@ namespace WebApplication1.Controllers {
         [HttpGet("content/{id:long}")]
         public IActionResult GetContent(long id) {
             try {
-                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                string? token = Request.Headers["Authorization"].ToString().Split(" ").LastOrDefault();
+                if (!AuthServices.ValidateToken(token))
                     return Unauthorized("Credenciales inválidas");
                 Files? item = FilesServices.GetSingle(new WhereSQL {
                     SQLClauses = new string[] {
@@ -80,7 +84,8 @@ namespace WebApplication1.Controllers {
         [HttpDelete("{id:long}")]
         public IActionResult DeleteItem(long id) {
             try {
-                if (!AuthServices.ValidateToken(Request.Headers["Authorization"]))
+                string? token = Request.Headers["Authorization"].ToString().Split(" ").LastOrDefault();
+                if (!AuthServices.ValidateToken(token))
                     return Unauthorized("Credenciales inválidas");
                 bool isSuccessfully = FilesServices.Delete(new WhereSQL {
                     SQLClauses = new string[] {
