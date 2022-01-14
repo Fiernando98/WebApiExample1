@@ -11,10 +11,10 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {RestaurantSQLTable.tableName} {whereSQL?.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                list.Add(new Restaurant {
-                                    ID = Convert.ToInt64(reader[$"{RestaurantSQLTable.id}"].ToString()),
-                                    Name = reader[$"{RestaurantSQLTable.name}"].ToString()
-                                });
+                                list.Add(new Restaurant(
+                                    id: Convert.ToInt64(reader[$"{RestaurantSQLTable.id}"].ToString()),
+                                    name: reader[$"{RestaurantSQLTable.name}"].ToString()!
+                                ));
                             }
                         }
                     }
@@ -33,10 +33,10 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {RestaurantSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new Restaurant {
-                                    ID = Convert.ToInt64(reader[$"{RestaurantSQLTable.id}"].ToString()),
-                                    Name = reader[$"{RestaurantSQLTable.name}"].ToString()
-                                };
+                                return new Restaurant(
+                                    id: Convert.ToInt64(reader[$"{RestaurantSQLTable.id}"].ToString()),
+                                    name: reader[$"{RestaurantSQLTable.name}"].ToString()!
+                                );
                             }
                         }
                     }

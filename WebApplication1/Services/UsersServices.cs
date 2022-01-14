@@ -7,7 +7,9 @@ namespace WebApplication1.Services {
         public static User Create(UserLogin newItem) {
             try {
                 string encryptGUID = Guid.NewGuid().ToString();
-                newItem.Password = EncryptionServices.Encrypt(newItem.Password!,encryptGUID);
+                string? passwordEncrypted = EncryptionServices.Encrypt(newItem.Password,encryptGUID);
+                if (passwordEncrypted == null) { throw new HttpResponseException(error: "Fallo en contraseña"); }
+                newItem.Password = passwordEncrypted;
                 using (SQLiteConnection dbContext = DBContext.GetInstance()) {
                     using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO {UserSQLTable.tableName} ({UserSQLTable.firstName}, {UserSQLTable.lastName}, {UserSQLTable.email}, {UserSQLTable.phone}, {UserSQLTable.encryptGUID}, {UserSQLTable.passwordEncrypted}) VALUES (?, ?, ?, ?, ?, ?)",dbContext)) {
                         command.Parameters.Add(new SQLiteParameter($"{UserSQLTable.firstName}",newItem.FirstName));
@@ -35,11 +37,12 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new User {
-                                    ID = Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
-                                    FirstName = reader[$"{UserSQLTable.firstName}"].ToString(),
-                                    LastName = reader[$"{UserSQLTable.lastName}"].ToString(),
-                                    Email = reader[$"{UserSQLTable.email}"].ToString(),
+                                return new User(
+                                    id: Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
+                                    firstname: reader[$"{UserSQLTable.firstName}"].ToString()!,
+                                    lastname: reader[$"{UserSQLTable.lastName}"].ToString()!,
+                                    email: reader[$"{UserSQLTable.email}"].ToString()!
+                                ) {
                                     Phone = reader[$"{UserSQLTable.phone}"].ToString()
                                 };
                             }
@@ -60,14 +63,15 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {UserSQLTable.tableName}  {whereSQL?.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new UserRegistrer {
-                                    ID = Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
-                                    FirstName = reader[$"{UserSQLTable.firstName}"].ToString(),
-                                    LastName = reader[$"{UserSQLTable.lastName}"].ToString(),
-                                    Email = reader[$"{UserSQLTable.email}"].ToString(),
-                                    Phone = reader[$"{UserSQLTable.phone}"].ToString(),
-                                    EncryptGUID = reader[$"{UserSQLTable.encryptGUID}"].ToString(),
-                                    Password = reader[$"{UserSQLTable.passwordEncrypted}"].ToString()
+                                return new UserRegistrer(
+                                    id: Convert.ToInt64(reader[$"{UserSQLTable.id}"].ToString()),
+                                    firstname: reader[$"{UserSQLTable.firstName}"].ToString()!,
+                                    lastname: reader[$"{UserSQLTable.lastName}"].ToString()!,
+                                    email: reader[$"{UserSQLTable.email}"].ToString()!,
+                                    encryptGUID: reader[$"{UserSQLTable.encryptGUID}"].ToString()!,
+                                    password: reader[$"{UserSQLTable.passwordEncrypted}"].ToString()!
+                                ) {
+                                    Phone = reader[$"{UserSQLTable.phone}"].ToString()
                                 };
                             }
                         }

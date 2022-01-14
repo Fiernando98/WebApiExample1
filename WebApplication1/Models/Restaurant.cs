@@ -9,7 +9,7 @@ namespace WebApplication1.Models {
 
         private static string[] _table = {
               $"{id} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL",
-              $"{name} TEXT"
+              $"{name} TEXT NOT NULL"
       };
 
         public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";

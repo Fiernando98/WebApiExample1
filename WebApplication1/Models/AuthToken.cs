@@ -11,7 +11,7 @@ namespace WebApplication1.Models {
 
         private static string[] _table = {
               $"{token} TEXT PRIMARY KEY NOT NULL",
-              $"{dateTimeCreated} INTEGER",
+              $"{dateTimeCreated} INTEGER NOT NULL",
               $"{idUser} INTEGER",
               $"FOREIGN KEY({idUser}) REFERENCES {UserSQLTable.tableName}({UserSQLTable.id}) ON DELETE CASCADE ON UPDATE CASCADE"
       };

@@ -14,8 +14,8 @@ namespace WebApplication1.Models {
 
         private static string[] _table = {
               $"{id} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL",
-              $"{firstName} TEXT",
-              $"{lastName} TEXT",
+              $"{firstName} TEXT NOT NULL",
+              $"{lastName} TEXT NOT NULL",
               $"{email} TEXT NOT NULL UNIQUE",
               $"{phone} TEXT",
               $"{encryptGUID} TEXT NOT NULL",
@@ -26,8 +26,8 @@ namespace WebApplication1.Models {
     }
 
     public class User {
-        public User(string firstname,string lastname,string email,string phone) =>
-        (FirstName, LastName, Email, Phone) = (firstname, lastname, email, phone);
+        public User(long id,string firstname,string lastname,string email) =>
+        (ID, FirstName, LastName, Email) = (id, firstname, lastname, email);
 
         [Required(ErrorMessage = "ID is required")]
         public long ID { get; set; }
@@ -48,30 +48,30 @@ namespace WebApplication1.Models {
         [Required(ErrorMessage = "Phone is required")]
         [Phone]
         [StringLength(100,ErrorMessage = "{0} length must be between {2} and {1}.",MinimumLength = 5)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
     }
 
     public class UserLogin : User {
-        public UserLogin(string firstname,string lastname,string email,string phone,string password)
-            : base(firstname: firstname,lastname: lastname,email: email,phone: phone) =>
+        public UserLogin(long id,string firstname,string lastname,string email,string password)
+            : base(id: id,firstname: firstname,lastname: lastname,email: email) =>
         (Password) = (password);
 
         [Required(ErrorMessage = "Password is required")]
         [StringLength(100,ErrorMessage = "{0} length must be between {2} and {1}.",MinimumLength = 5)]
         public string Password { get; set; }
         public User getUser() => new User(
-            FirstName = FirstName,
-            LastName = LastName,
-            Email = Email,
-            Phone = Phone
+            id: ID,
+            firstname: FirstName,
+            lastname: LastName,
+            email: Email
         ) {
-            ID = ID
+            Phone = Phone
         };
     }
 
     public class UserRegistrer : UserLogin {
-        public UserRegistrer(string firstname,string lastname,string email,string phone,string password,string encryptGUID)
-            : base(firstname: firstname,lastname: lastname,email: email,phone: phone,password: password) =>
+        public UserRegistrer(long id,string firstname,string lastname,string email,string password,string encryptGUID)
+            : base(id: id,firstname: firstname,lastname: lastname,email: email,password: password) =>
         (EncryptGUID) = (encryptGUID);
 
         [Required(ErrorMessage = "EncryptGUID is required")]

@@ -13,23 +13,21 @@ namespace WebApplication1.Models {
         private static string[] _table = {
               $"{id} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL",
               $"{idRestaurant} INTEGER",
-              $"{name} TEXT",
+              $"{name} TEXT NOT NULL",
               $"{description} TEXT",
-              $"{calories} REAL",
+              $"{calories} REAL NOT NULL",
               $"FOREIGN KEY({idRestaurant}) REFERENCES {RestaurantSQLTable.tableName}({RestaurantSQLTable.id}) ON DELETE CASCADE ON UPDATE CASCADE"
       };
 
         public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";
     }
     public class Food {
-        public Food(long id,string name,Restaurant restaurant,double calories) =>
-        (ID, Name, Restaurant, Calories) = (id, name, restaurant, calories);
+        public Food(long id,string name,double calories) => (ID, Name, Calories) = (id, name, calories);
 
         [Required(ErrorMessage = "ID is required")]
         public long ID { get; set; }
 
-        [Required(ErrorMessage = "Restaurant is required")]
-        public Restaurant Restaurant { get; set; }
+        public Restaurant? Restaurant { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
         [StringLength(100,ErrorMessage = "{0} length must be between {2} and {1}.",MinimumLength = 5)]
