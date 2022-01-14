@@ -12,7 +12,7 @@ namespace WebApplication1.Models {
 
         private static string[] _table = {
               $"{id} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL",
-              $"{idRestaurant} INTEGER",
+              $"{idRestaurant} INTEGER NOT NULL",
               $"{name} TEXT NOT NULL",
               $"{description} TEXT",
               $"{calories} REAL NOT NULL",
@@ -22,11 +22,12 @@ namespace WebApplication1.Models {
         public static string toCreateQuery => $"CREATE TABLE IF NOT EXISTS {tableName} ({String.Join(", ",_table)});";
     }
     public class Food {
-        public Food(long id,string name,double calories) => (ID, Name, Calories) = (id, name, calories);
+        public Food(long id,Restaurant restaurant,string name,double calories) => (ID, Restaurant, Name, Calories) = (id, restaurant, name, calories);
 
         [Required(ErrorMessage = "ID is required")]
         public long ID { get; set; }
 
+        [Required(ErrorMessage = "Restaurant is required")]
         public Restaurant? Restaurant { get; set; }
 
         [Required(ErrorMessage = "Name is required")]

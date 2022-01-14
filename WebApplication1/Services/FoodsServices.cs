@@ -11,10 +11,9 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                list.Add(new Food(id: Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),name: reader[$"{FoodSQLTable.name}"].ToString()!,calories: Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])) {
-                                    Restaurant = (reader[$"{FoodSQLTable.idRestaurant}"] != null) ? RestaurantsServices.GetSingle(new WhereSQL {
-                                        SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
-                                    }) : null,
+                                list.Add(new Food(id: Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),restaurant: RestaurantsServices.GetSingle(new WhereSQL {
+                                    SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
+                                })!,name: reader[$"{FoodSQLTable.name}"].ToString()!,calories: Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])) {
                                     Description = reader[$"{FoodSQLTable.description}"].ToString()
                                 });
                             }
@@ -35,10 +34,9 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FoodSQLTable.tableName} {whereSQL?.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new Food(id: Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),name: reader[$"{FoodSQLTable.name}"].ToString()!,calories: Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])) {
-                                    Restaurant = (reader[$"{FoodSQLTable.idRestaurant}"] != null) ? RestaurantsServices.GetSingle(new WhereSQL {
-                                        SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
-                                    }) : null,
+                                return new Food(id: Convert.ToInt64(reader[$"{FoodSQLTable.id}"].ToString()),restaurant: RestaurantsServices.GetSingle(new WhereSQL {
+                                    SQLClauses = new string[] { $"{RestaurantSQLTable.id} = {Convert.ToInt64(reader[$"{FoodSQLTable.idRestaurant}"].ToString())}" }
+                                })!,name: reader[$"{FoodSQLTable.name}"].ToString()!,calories: Convert.ToDouble(reader[$"{FoodSQLTable.calories}"])) {
                                     Description = reader[$"{FoodSQLTable.description}"].ToString()
                                 };
                             }
