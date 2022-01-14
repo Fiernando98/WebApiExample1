@@ -1,4 +1,6 @@
-﻿namespace WebApplication1.Models {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication1.Models {
     abstract class RestaurantSQLTable {
         public static string tableName = "Restaurants";
 
@@ -14,7 +16,13 @@
     }
 
     public class Restaurant {
+        public Restaurant(long id,string name) => (ID, Name) = (id, name);
+
+        [Required(ErrorMessage = "ID is required")]
         public long ID { get; set; }
-        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100,ErrorMessage = "{0} length must be between {2} and {1}.",MinimumLength = 5)]
+        public string Name { get; set; }
     }
 }

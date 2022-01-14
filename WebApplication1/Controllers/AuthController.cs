@@ -27,10 +27,10 @@ namespace WebApplication1.Controllers {
                 if (userRegistrer == null) return NotFound("Cuenta no encontrada");
                 if (!password.Equals(EncryptionServices.Decrypt(userRegistrer.Password!,userRegistrer.EncryptGUID!)))
                     return Unauthorized("Contraseña inválida");
-                return Ok(AuthServices.Create(new AuthToken {
-                    Token = Guid.NewGuid().ToString(),
-                    User = userRegistrer.getUser()
-                }));
+                return Ok(AuthServices.Create(new AuthToken(
+                    token: Guid.NewGuid().ToString(),
+                    user: userRegistrer.getUser()
+                )));
             } catch (HttpResponseException httpError) {
                 return StatusCode(httpError.StatusCode,httpError.Error);
             }

@@ -1,4 +1,6 @@
-﻿namespace WebApplication1.Models {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication1.Models {
     abstract class FilesSQLTable {
         public static string tableName = "Files";
 
@@ -14,6 +16,9 @@
     }
 
     public class Files {
+        public Files(long id) => (ID) = (id);
+
+        [Required(ErrorMessage = "ID is required")]
         public long ID { get; set; }
         public string? Path { get; set; }
     }

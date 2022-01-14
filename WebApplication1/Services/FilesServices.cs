@@ -19,8 +19,7 @@ namespace WebApplication1.Services {
                         int changes = command.ExecuteNonQuery();
                         if (changes <= 0) throw new Exception("Error en base de datos");
                         long newID = dbContext.LastInsertRowId;
-                        return new Files {
-                            ID = newID,
+                        return new Files(id: newID) {
                             Path = filePath
                         };
                     }
@@ -62,8 +61,7 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FilesSQLTable.tableName} {whereSQL?.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                list.Add(new Files {
-                                    ID = Convert.ToInt64(reader[$"{FilesSQLTable.id}"].ToString()),
+                                list.Add(new Files(id: Convert.ToInt64(reader[$"{FilesSQLTable.id}"].ToString())) {
                                     Path = reader[$"{FilesSQLTable.path}"].ToString()
                                 });
                             }
@@ -84,8 +82,7 @@ namespace WebApplication1.Services {
                     using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM {FilesSQLTable.tableName} {whereSQL.GetClausule()}",dbContext)) {
                         using (SQLiteDataReader reader = command.ExecuteReader()) {
                             while (reader.Read()) {
-                                return new Files {
-                                    ID = Convert.ToInt64(reader[$"{FilesSQLTable.id}"].ToString()),
+                                return new Files(id: Convert.ToInt64(reader[$"{FilesSQLTable.id}"].ToString())) {
                                     Path = reader[$"{FilesSQLTable.path}"].ToString()
                                 };
                             }
